@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">    
+    <title>Happy Birthday Fleur! ♡</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Floating Decorations -->
+    <div class="floating-decoration deco-1">🌸</div>
+    <div class="floating-decoration deco-2">💖</div>
+    <div class="floating-decoration deco-3">🎀</div>
+    <div class="floating-decoration deco-4">✨</div>
+    <div class="floating-decoration deco-5">🍓</div>
+    <div class="floating-decoration deco-6">🧸</div>
+
+
+    <!-- Main Content Box -->
+    <div class="y2k-container rounded-lg p-4 md:p-8 max-w-4xl mx-auto text-center text-gray-700">
+        
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="marquee-container">
+                <h1 class="scrolling-text glitter-text text-5xl md:text-7xl font-bold tracking-wider">
+                    Happy Birthday Fleur!
+                </h1>
+            </div>
+            <p class="text-pink-400 text-2xl mt-2">~*~ i love you so much ~*~</p>
+        </header>
+
+        <!-- Decorations -->
+        <div class="flex justify-center items-center space-x-4 my-6 text-5xl">
+            <img src="images/cutegif.gif" alt="Cute animation" class="w-16 h-16">
+            <span class="text-pink-300">♡</span>
+            <img src="images/rilakkuma.png" alt="Rilakkuma" class="w-16 h-16">
+             <span class="text-pink-300">♡</span>
+            <img src="images/pinkcute.png" alt="Cute pink character" class="w-16 h-16">
+        </div>
+        
+        <hr class="border-t-2 border-dashed border-pink-300 my-8">
+
+        <!-- Puzzle Game Section -->
+        <section class="mb-12">
+            <h2 class="text-3xl text-pink-500 mb-4">A Little Puzzle Game!</h2>
+            <p class="mb-4 text-lg">Swap the pieces to solve the puzzle of us! ♡</p>
+            <div id="puzzle-container" class="mx-auto bg-pink-100 rounded-md overflow-hidden relative shadow-lg">
+                <canvas id="puzzle-canvas"></canvas>
+            </div>
+             <button id="shuffle-button" class="mt-4 px-6 py-2 bg-pink-400 text-white rounded-full border-2 border-white shadow-md hover:bg-pink-500 transition-all text-xl">Shuffle!</button>
+        </section>
+
+        <hr class="border-t-2 border-dashed border-pink-300 my-8">
+
+        <!-- Envelopes Section -->
+        <section>
+            <h2 class="text-3xl text-pink-500 mb-6">A Few Notes For You...</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+
+                <!-- Envelope 1 -->
+                <div class="envelope w-64 h-40 relative">
+                    <div class="envelope-back w-full h-full bg-pink-200 rounded-lg absolute top-0 left-0"></div>
+                    <div class="letter bg-white border-2 border-pink-300 rounded-lg w-full h-full flex flex-col items-center justify-center text-gray-600">
+                        <img src="images/sticker1.png" alt="Sticker 1" class="w-20 h-20 mb-2">
+                        <p class="text-xl">Happy Birthday!!</p>
+                        <p class="text-sm">Hope you have the best day ever!</p>
+                    </div>
+                    <div class="envelope-flap w-full h-1/2 bg-pink-300 absolute top-0 left-0" style="clip-path: polygon(0 0, 100% 0, 50% 100%);"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-pink-500 font-bold">To: Fleur ♡</div>
+                </div>
+
+                <!-- Envelope 2 -->
+                <div class="envelope w-64 h-40 relative">
+                    <div class="envelope-back w-full h-full bg-pink-200 rounded-lg absolute top-0 left-0"></div>
+                    <div class="letter bg-white border-2 border-pink-300 rounded-lg w-full h-full flex flex-col items-center justify-center text-gray-600">
+                        <img src="images/sticker2.png" alt="Sticker 2" class="w-20 h-20 mb-2">
+                        <p class="text-xl">You're so sweet!</p>
+                        <p class="text-sm">So glad we're friends!</p>
+                    </div>
+                    <div class="envelope-flap w-full h-1/2 bg-pink-300 absolute top-0 left-0" style="clip-path: polygon(0 0, 100% 0, 50% 100%);"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-pink-500 font-bold">To: Fleur ♡</div>
+                </div>
+
+                <!-- Envelope 3 -->
+                <div class="envelope w-64 h-40 relative">
+                    <div class="envelope-back w-full h-full bg-pink-200 rounded-lg absolute top-0 left-0"></div>
+                    <div class="letter bg-white border-2 border-pink-300 rounded-lg w-full h-full flex flex-col items-center justify-center text-gray-600">
+                        <img src="images/sticker3.png" alt="Sticker 3" class="w-20 h-20 mb-2">
+                        <p class="text-xl">Sending you a big hug!</p>
+                        <p class="text-sm">xoxo</p>
+                    </div>
+                    <div class="envelope-flap w-full h-1/2 bg-pink-300 absolute top-0 left-0" style="clip-path: polygon(0 0, 100% 0, 50% 100%);"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-pink-500 font-bold">To: Fleur ♡</div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Letter Modal -->
+    <div id="letter-modal">
+        <div id="letter-modal-content"></div>
+        <button id="letter-modal-close">Close</button>
+    </div>
+
+    <!-- Custom message box for puzzle completion -->
+    <div id="puzzle-complete-modal">
+        <p id="puzzle-message-text"></p>
+        <button id="puzzle-message-close-button">OK</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="envelope-script.js"></script>
+    <script src="cursor-trail.js"></script>
+</body>
+</html>
