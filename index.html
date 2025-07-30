@@ -68,6 +68,19 @@
                         <canvas id="maze-canvas" width="400" height="400"></canvas>
                     </div>
                 </div>
+
+                <!-- Emote Game (Initially Hidden) -->
+                <div id="emote-game-container" style="display: none;">
+                    <p class="mb-4 text-lg">Guess the phrase from the emotes! ♡</p>
+                    <div id="emote-sequence" class="text-5xl mb-4">
+                        <span>🎂</span><span>🎉</span><span>🥳</span>
+                    </div>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="text" id="emote-answer-input" placeholder="Your guess..." class="text-xl px-4 py-2 rounded-full border-2 border-pink-300 focus:border-pink-500 focus:ring-pink-500 outline-none">
+                        <button id="check-emote-answer" class="px-6 py-2 bg-pink-400 text-white rounded-full border-2 border-white shadow-md hover:bg-pink-500 transition-all text-xl">Check</button>
+                    </div>
+                    <p id="emote-feedback" class="text-lg mt-4 h-6"></p> <!-- For feedback -->
+                </div>
             </div>
         </section>
 
@@ -135,5 +148,6 @@
     <script src="envelope-script.js"></script>
     <script src="cursor-trail.js"></script>
     <script src="maze.js"></script>
+    <script src="emote-game.js"></script>
 </body>
 </html>

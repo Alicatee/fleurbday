@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameTitle = document.getElementById('game-title');
     const puzzleGameContainer = document.getElementById('puzzle-game-container');
     const mazeGameContainer = document.getElementById('maze-game-container');
+    const emoteGameContainer = document.getElementById('emote-game-container');
 
-    if (prevGameBtn && nextGameBtn && gameTitle && puzzleGameContainer && mazeGameContainer) {
+    if (prevGameBtn && nextGameBtn && gameTitle && puzzleGameContainer && mazeGameContainer && emoteGameContainer) {
         const games = [
             { title: 'A Little Puzzle Game!', container: puzzleGameContainer },
-            { title: 'A Cute Maze Adventure!', container: mazeGameContainer }
+            { title: 'A Cute Maze Adventure!', container: mazeGameContainer },
+            { title: 'An Emote-ional Game!', container: emoteGameContainer }
         ];
         let currentGameIndex = 0;
 
