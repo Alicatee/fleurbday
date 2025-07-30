@@ -1,8 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const trailContainer = document.body;
+    const mazeCanvasContainer = document.getElementById('maze-canvas-container');
+    let isTrailEnabled = true;
+
+    if (mazeCanvasContainer) {
+        mazeCanvasContainer.addEventListener('mouseenter', () => {
+            isTrailEnabled = false;
+        });
+
+        mazeCanvasContainer.addEventListener('mouseleave', () => {
+            isTrailEnabled = true;
+        });
+    }
 
     document.addEventListener('mousemove', (e) => {
-        createTrail(e.pageX, e.pageY);
+        if (isTrailEnabled) {
+            createTrail(e.pageX, e.pageY);
+        }
     });
 
     function createTrail(x, y) {

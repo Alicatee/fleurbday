@@ -42,14 +42,33 @@
         
         <hr class="border-t-2 border-dashed border-pink-300 my-8">
 
-        <!-- Puzzle Game Section -->
-        <section class="mb-12">
-            <h2 class="text-3xl text-pink-500 mb-4">A Little Puzzle Game!</h2>
-            <p class="mb-4 text-lg">Swap the pieces to solve the puzzle of us! ♡</p>
-            <div id="puzzle-container" class="mx-auto bg-pink-100 rounded-md overflow-hidden relative shadow-lg">
-                <canvas id="puzzle-canvas"></canvas>
+        <!-- Game Section -->
+        <section id="game-section" class="mb-12">
+            <div class="flex justify-center items-center mb-4">
+                <button id="prev-game-btn" class="arrow-button text-4xl text-pink-400 hover:text-pink-600 transition-transform duration-300 transform hover:scale-125 mr-4 opacity-50 cursor-not-allowed" disabled>◄</button>
+                <h2 id="game-title" class="text-3xl text-pink-500">A Little Puzzle Game!</h2>
+                <button id="next-game-btn" class="arrow-button text-4xl text-pink-400 hover:text-pink-600 transition-transform duration-300 transform hover:scale-125 ml-4">►</button>
             </div>
-             <button id="shuffle-button" class="mt-4 px-6 py-2 bg-pink-400 text-white rounded-full border-2 border-white shadow-md hover:bg-pink-500 transition-all text-xl">Shuffle!</button>
+
+            <!-- Game Container -->
+            <div id="games-wrapper" class="relative">
+                <!-- Puzzle Game -->
+                <div id="puzzle-game-container">
+                    <p class="mb-4 text-lg">Swap the pieces to solve the puzzle of us! ♡</p>
+                    <div id="puzzle-container" class="mx-auto bg-pink-100 rounded-md overflow-hidden relative shadow-lg">
+                        <canvas id="puzzle-canvas"></canvas>
+                    </div>
+                     <button id="shuffle-button" class="mt-4 px-6 py-2 bg-pink-400 text-white rounded-full border-2 border-white shadow-md hover:bg-pink-500 transition-all text-xl">Shuffle!</button>
+                </div>
+
+                <!-- Maze Game (Initially Hidden) -->
+                <div id="maze-game-container" style="display: none;">
+                    <p class="mb-4 text-lg">Guide the character to the heart! Drag to move. ♡</p>
+                    <div id="maze-canvas-container" class="mx-auto rounded-md overflow-hidden relative shadow-lg" style="width: 400px; height: 400px; background-color: #fdf2f8; border: 1px solid #FFC0CB;">
+                        <canvas id="maze-canvas" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <hr class="border-t-2 border-dashed border-pink-300 my-8">
@@ -115,5 +134,6 @@
     <script src="script.js"></script>
     <script src="envelope-script.js"></script>
     <script src="cursor-trail.js"></script>
+    <script src="maze.js"></script>
 </body>
 </html>
