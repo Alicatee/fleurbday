@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         x: 0,
         y: 0,
         size: cellSize * 0.8,
-        // Make collision size a bit smaller for easier navigation
         collisionSize: cellSize * 0.4,
         image: new Image()
     };
@@ -35,15 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isDragging = false;
     let dragStartX, dragStartY;
-    let touchIdentifier = null; // Track which touch we're following
+    let touchIdentifier = null;
+
+    let movement = {
+        up: false,
+        down: false,
+        left: false,
+        right: false
+    };
+    let animationFrameId = null;
 
     player.image.src = 'images/rilakkuma.png';
     target.image.src = 'images/pinkcute.png';
 
     function drawMaze() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw maze walls
         ctx.fillStyle = '#fce7f3';
         for (let row = 0; row < maze.length; row++) {
             for (let col = 0; col < maze[row].length; col++) {
@@ -52,19 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
-        // Draw target and player
         ctx.drawImage(target.image, target.x, target.y, target.size, target.size);
         ctx.drawImage(player.image, player.x, player.y, player.size, player.size);
     }
-    
+
     function checkCollision(x, y) {
-        // Use collision size centered within the player sprite
         const offset = (player.size - player.collisionSize) / 2;
         const checkX = x + offset;
         const checkY = y + offset;
-        
-        // Add a tiny buffer to avoid floating point edge cases
         const buffer = 0.1;
         const corners = [
             {x: checkX + buffer, y: checkY + buffer},
@@ -76,27 +76,21 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const corner of corners) {
             const col = Math.floor(corner.x / cellSize);
             const row = Math.floor(corner.y / cellSize);
-
-            if (row < 0 || row >= maze.length || col < 0 || col >= maze[0].length) {
-                return true;
-            }
-            if (maze[row][col] === 1) {
+            if (row < 0 || row >= maze.length || col < 0 || col >= maze[0].length || maze[row][col] === 1) {
                 return true;
             }
         }
         return false;
     }
-
+    
     function isPathClear(startX, startY, endX, endY) {
         const dx = endX - startX;
         const dy = endY - startY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        // If we're not moving, path is clear
         if (distance < 0.1) return true;
         
-        // Check multiple points along the path
-        const stepSize = 2; // Check every 2 pixels
+        const stepSize = 2; 
         const numSteps = Math.ceil(distance / stepSize);
 
         for (let i = 1; i <= numSteps; i++) {
@@ -107,29 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false;
             }
         }
-
         return true;
     }
 
-    // Emergency unstuck function - nudges player to nearest valid position
     function unstuckPlayer() {
         const testPositions = [
-            {x: 0, y: 0},        // Current position
-            {x: -1, y: 0},       // Left
-            {x: 1, y: 0},        // Right
-            {x: 0, y: -1},       // Up
-            {x: 0, y: 1},        // Down
-            {x: -1, y: -1},      // Diagonals
-            {x: 1, y: -1},
-            {x: -1, y: 1},
-            {x: 1, y: 1}
+            {x: 0, y: 0}, {x: -1, y: 0}, {x: 1, y: 0}, {x: 0, y: -1}, {x: 0, y: 1},
+            {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1}, {x: 1, y: 1}
         ];
-
         for (let radius = 1; radius <= 5; radius++) {
             for (const offset of testPositions) {
                 const testX = player.x + offset.x * radius;
                 const testY = player.y + offset.y * radius;
-                
                 if (!checkCollision(testX, testY)) {
                     player.x = testX;
                     player.y = testY;
@@ -145,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerCenterY = player.y + player.size / 2;
         const targetCenterX = target.x + target.size / 2;
         const targetCenterY = target.y + target.size / 2;
-        
         const dx = playerCenterX - targetCenterX;
         const dy = playerCenterY - targetCenterY;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -159,7 +141,71 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             player.x = 0;
             player.y = 0;
+            if(animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+                Object.keys(movement).forEach(key => movement[key] = false);
+            }
             drawMaze();
+        }
+    }
+    
+    function gameLoop() {
+        const moveAmount = 2.5;
+        let dx = 0;
+        let dy = 0;
+
+        if (movement.up) dy -= moveAmount;
+        if (movement.down) dy += moveAmount;
+        if (movement.left) dx -= moveAmount;
+        if (movement.right) dx += moveAmount;
+
+        if (dx !== 0 || dy !== 0) {
+            let targetX = player.x + dx;
+            let targetY = player.y + dy;
+
+            // Wall sliding logic
+            if (!isPathClear(player.x, player.y, targetX, targetY)) {
+                // Can we move on X?
+                if (dx !== 0 && isPathClear(player.x, player.y, targetX, player.y)) {
+                    targetY = player.y;
+                } 
+                // Can we move on Y?
+                else if (dy !== 0 && isPathClear(player.x, player.y, player.x, targetY)) {
+                    targetX = player.x;
+                }
+                // Can't move in either preferred direction
+                else {
+                    targetX = player.x;
+                    targetY = player.y;
+                }
+            }
+
+            player.x = targetX;
+            player.y = targetY;
+
+            player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
+            player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+            
+            drawMaze();
+            checkWin();
+        }
+        
+        animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function startMoving(direction) {
+        movement[direction] = true;
+        if (!animationFrameId) {
+            gameLoop();
+        }
+    }
+
+    function stopMoving(direction) {
+        movement[direction] = false;
+        if (Object.values(movement).every(v => !v)) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
         }
     }
 
@@ -167,8 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = canvas.getBoundingClientRect();
         const mouseX = clientX - rect.left;
         const mouseY = clientY - rect.top;
-
-        // Make the touch target larger for easier grabbing
         const touchMargin = 15;
         if (mouseX >= player.x - touchMargin && mouseX <= player.x + player.size + touchMargin &&
             mouseY >= player.y - touchMargin && mouseY <= player.y + player.size + touchMargin) {
@@ -176,8 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dragStartX = mouseX - player.x;
             dragStartY = mouseY - player.y;
             touchIdentifier = touchId;
-            
-            // Check if player is stuck and unstuck them
             if (checkCollision(player.x, player.y)) {
                 unstuckPlayer();
             }
@@ -186,51 +228,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleMove(clientX, clientY) {
         if (!isDragging) return;
-
         const rect = canvas.getBoundingClientRect();
         const mouseX = clientX - rect.left;
         const mouseY = clientY - rect.top;
-
         let targetX = mouseX - dragStartX;
         let targetY = mouseY - dragStartY;
-
-        // Clamp to canvas bounds
         targetX = Math.max(0, Math.min(canvas.width - player.size, targetX));
         targetY = Math.max(0, Math.min(canvas.height - player.size, targetY));
-        
         const originalX = player.x;
         const originalY = player.y;
 
-        // Try moving both axes at once first (diagonal movement)
         if (isPathClear(originalX, originalY, targetX, targetY)) {
             player.x = targetX;
             player.y = targetY;
         } else {
-            // Try moving along X-axis
             if (isPathClear(originalX, originalY, targetX, originalY)) {
                 player.x = targetX;
             } else {
-                // Try partial X movement
                 const dx = targetX - originalX;
-                const steps = 20;
-                for (let i = steps; i > 0; i--) {
-                    const testX = originalX + (dx * i / steps);
+                for (let i = 20; i > 0; i--) {
+                    const testX = originalX + (dx * i / 20);
                     if (isPathClear(originalX, originalY, testX, originalY)) {
                         player.x = testX;
                         break;
                     }
                 }
             }
-
-            // Try moving along Y-axis from the new X position
             if (isPathClear(player.x, originalY, player.x, targetY)) {
                 player.y = targetY;
             } else {
-                // Try partial Y movement
                 const dy = targetY - originalY;
-                const steps = 20;
-                for (let i = steps; i > 0; i--) {
-                    const testY = originalY + (dy * i / steps);
+                for (let i = 20; i > 0; i--) {
+                    const testY = originalY + (dy * i / 20);
                     if (isPathClear(player.x, originalY, player.x, testY)) {
                         player.y = testY;
                         break;
@@ -238,12 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
-        // Round to avoid floating point accumulation issues
         player.x = Math.round(player.x * 100) / 100;
         player.y = Math.round(player.y * 100) / 100;
-        
-        // Only redraw if the player has moved
         if (Math.abs(player.x - originalX) > 0.01 || Math.abs(player.y - originalY) > 0.01) {
             drawMaze();
             checkWin();
@@ -255,13 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
         touchIdentifier = null;
     }
 
-    // Mouse events
     canvas.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
     canvas.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
     canvas.addEventListener('mouseup', handleEnd);
     canvas.addEventListener('mouseleave', handleEnd);
-
-    // Touch events
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         if (e.touches.length > 0) {
@@ -269,10 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handleStart(touch.clientX, touch.clientY, touch.identifier);
         }
     }, { passive: false });
-
     canvas.addEventListener('touchmove', (e) => {
         e.preventDefault();
-        // Only track the original touch
         for (let i = 0; i < e.touches.length; i++) {
             const touch = e.touches[i];
             if (touchIdentifier === null || touch.identifier === touchIdentifier) {
@@ -281,10 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }, { passive: false });
-
     canvas.addEventListener('touchend', (e) => {
         e.preventDefault();
-        // Check if our tracked touch ended
         let touchEnded = true;
         for (let i = 0; i < e.touches.length; i++) {
             if (e.touches[i].identifier === touchIdentifier) {
@@ -292,23 +310,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
-        if (touchEnded) {
-            handleEnd();
-        }
+        if (touchEnded) handleEnd();
     });
-
     canvas.addEventListener('touchcancel', handleEnd);
 
-    // Load images and draw
+    // Button event listeners
+    const buttons = {
+        'maze-up': 'up', 'maze-down': 'down', 'maze-left': 'left', 'maze-right': 'right'
+    };
+    for (const [id, direction] of Object.entries(buttons)) {
+        const button = document.getElementById(id);
+        button.addEventListener('mousedown', () => startMoving(direction));
+        button.addEventListener('mouseup', () => stopMoving(direction));
+        button.addEventListener('mouseleave', () => stopMoving(direction));
+        button.addEventListener('touchstart', (e) => { e.preventDefault(); startMoving(direction); });
+        button.addEventListener('touchend', (e) => { e.preventDefault(); stopMoving(direction); });
+        button.addEventListener('touchcancel', (e) => { e.preventDefault(); stopMoving(direction); });
+    }
+
     let imagesLoaded = 0;
     const totalImages = 2;
     const onImageLoad = () => {
         imagesLoaded++;
-        if (imagesLoaded === totalImages) {
-            drawMaze();
-        }
+        if (imagesLoaded === totalImages) drawMaze();
     };
-
     player.image.onload = onImageLoad;
     target.image.onload = onImageLoad;
 });

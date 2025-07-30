@@ -63,9 +63,23 @@
 
                 <!-- Maze Game (Initially Hidden) -->
                 <div id="maze-game-container" style="display: none;">
-                    <p class="mb-4 text-lg">Guide the character to the heart! Drag to move. ♡</p>
+                    <p class="mb-4 text-lg">Guide the character to the heart! Use arrows or drag to move. ♡</p>
                     <div id="maze-canvas-container" class="mx-auto rounded-md overflow-hidden relative shadow-lg" style="width: 400px; height: 400px; background-color: #fdf2f8; border: 1px solid #FFC0CB;">
                         <canvas id="maze-canvas" width="400" height="400"></canvas>
+                    </div>
+                    <!-- Maze Controls -->
+                    <div id="maze-controls" class="mt-4">
+                        <div class="grid grid-cols-3 gap-2 w-48 mx-auto">
+                            <div></div>
+                            <button id="maze-up" class="maze-arrow-btn">▲</button>
+                            <div></div>
+                            <button id="maze-left" class="maze-arrow-btn">◄</button>
+                            <div class="h-16 w-16"></div> <!-- center spacer -->
+                            <button id="maze-right" class="maze-arrow-btn">►</button>
+                            <div></div>
+                            <button id="maze-down" class="maze-arrow-btn">▼</button>
+                            <div></div>
+                        </div>
                     </div>
                 </div>
 

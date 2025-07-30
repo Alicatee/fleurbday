@@ -152,11 +152,11 @@ body {
 }
 
 .deco-1 { top: 10%; left: 5%; animation-delay: 0s; }
-.deco-2 { top: 20%; left: 90%; animation-delay: -5s; }
+.deco-2 { top: 20%; right: 5%; animation-delay: -5s; }
 .deco-3 { top: 70%; left: 10%; animation-delay: -10s; }
-.deco-4 { top: 85%; left: 80%; animation-delay: -2s; }
+.deco-4 { top: 85%; right: 10%; animation-delay: -2s; }
 .deco-5 { top: 5%; left: 50%; animation-delay: -7s; }
-.deco-6 { top: 50%; left: 95%; animation-delay: -3s; }
+.deco-6 { top: 50%; right: 2%; animation-delay: -3s; }
 
 @keyframes float {
     0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
@@ -297,4 +297,36 @@ body {
 @keyframes marquee {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-100%); }
-} 
+}
+
+/* --- Maze Controls --- */
+.maze-arrow-btn {
+    background-color: #ffc0cb; /* Pink */
+    border: 2px solid #fff;
+    color: #DB2777; /* Darker Pink */
+    font-size: 2rem;
+    line-height: 1;
+    width: 4rem; /* 64px */
+    height: 4rem; /* 64px */
+    border-radius: 9999px; /* circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    user-select: none; /* Prevent text selection on repeated taps */
+}
+
+.maze-arrow-btn:active {
+    background-color: #f9a8d4; /* Lighter Pink */
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide on desktop, show on mobile */
+@media (min-width: 768px) {
+    #maze-controls {
+        display: none;
+    }
+}
