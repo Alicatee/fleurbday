@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const mazeGameContainer = document.getElementById('maze-game-container');
     const emoteGameContainer = document.getElementById('emote-game-container');
 
+    // This function will be replaced by the puzzle's specific resize logic later.
+    // This ensures that when we switch games, we can call the right function.
+    let resizePuzzleCanvas = () => {};
+
     if (prevGameBtn && nextGameBtn && gameTitle && puzzleGameContainer && mazeGameContainer && emoteGameContainer) {
         const games = [
             { title: 'A Little Puzzle Game!', container: puzzleGameContainer },
@@ -17,10 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentGameIndex = 0;
 
         function updateGameDisplay() {
+            // Hide all game containers first
             games.forEach(game => game.container.style.display = 'none');
-            games[currentGameIndex].container.style.display = 'block';
+            
+            // Show the current game's container
+            const currentContainer = games[currentGameIndex].container;
+            currentContainer.style.display = 'block';
             gameTitle.textContent = games[currentGameIndex].title;
 
+            // If we just switched to the puzzle game, we must resize its canvas.
+            // A timeout is used to ensure the container is visible in the DOM
+            // and has a clientWidth before we try to measure and resize the canvas.
+            if (currentContainer === puzzleGameContainer) {
+                setTimeout(resizePuzzleCanvas, 0);
+            }
+
+            // Update button states
             prevGameBtn.disabled = currentGameIndex === 0;
             nextGameBtn.disabled = currentGameIndex === games.length - 1;
 
@@ -88,12 +104,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('puzzle-container');
             if (!container) return;
             const newSize = container.clientWidth;
+
+            // Safeguard: If the container is not visible (e.g., display: none),
+            // its width will be 0. We should not attempt to resize the canvas
+            // in this case, as it would make it invisible.
+            if (newSize === 0) {
+                return;
+            }
+
             canvas.width = newSize;
             canvas.height = newSize;
             pieceWidth = canvas.width / COLS;
             pieceHeight = canvas.height / ROWS;
             drawPuzzle();
         }
+        
+        // Make the puzzle's resize function available to the game switching logic
+        resizePuzzleCanvas = resizeCanvas;
 
         function initializeAndShuffle() {
             puzzlePieces = [];
